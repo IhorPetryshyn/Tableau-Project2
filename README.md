@@ -49,6 +49,10 @@ The automated function evaluates statistical significance ($\alpha = 0.05$) for 
 * **Recommendation:** Reject Variant B. The interface changes were clearly designed without desktop optimization in mind, introducing heavy visual obstacles or bugs that disrupt the primary conversion journey on larger screens.
 
 ---
+## Screenshot of Dashboard
+<img width="1199" height="799" alt="Complex project 2" src="https://github.com/user-attachments/assets/e39ef1b3-abe1-45ab-b047-d00a38dba6f4" />
+
+---
 
 ## Tech Stack & Libraries
 * **SQL** (BigQuery) — Raw data aggregation and session formatting

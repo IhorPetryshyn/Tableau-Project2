@@ -1,48 +1,58 @@
-# 📊 User Behavior, Revenue & Subscription Analytics (Portfolio1)
+# A/B Testing Analysis Portfolio Project
 
-## 📝 Description
-This project features a comprehensive analysis of company business metrics divided into two interconnected dashboards. It helps track monetization efficiency, user acquisition performance, account verification quality, and technical (Device/OS) and geographical audience distribution.
+## Project Overview
+This project focuses on evaluating the performance of new user interface configurations and algorithms (Variant B) compared to the baseline system (Variant A) across four independent A/B tests. The goal is to optimize the conversion funnel by analyzing data sliced by device categories and traffic channels, verifying statistical significance, and providing actionable business recommendations.
 
-# 📸 Main dashboard with sales data
-<img width="899" height="1299" alt="Main dashboard Project 2" src="https://github.com/user-attachments/assets/0300e0bd-f741-4fcd-ac14-af5d6fc56b24" />
-
-# 📸 Additional dashboard showing account information
-<img width="899" height="1199" alt="additional dashboard Project 2" src="https://github.com/user-attachments/assets/4c77157b-2cb2-45a9-8a23-4f454a78fa21" />
-
-
-**Key business insights provided by the dashboard:**
-* **Monetization Analysis:** Evaluation of total revenue, sales dynamics, and the revenue split between active subscribers and users who cancelled their subscription.
-* **User Profiling:** Monitoring user engagement (sessions), analyzing subscription status distribution, and tracking platform security (account verification rate).
-* **Technical & Geographic Breakdown:** Identifying priority platforms for product development (Device/OS) and pinpointing core markets (Country/Continent).
+The analysis consists of:
+1. **Data Extraction:** Running standard database syntax and queries to aggregate session-level user interactions from a BigQuery database.
+2. **Statistical Analysis:** Implementing an automated segmentation and evaluation function using Python (Pandas & Statsmodels) in Google Colab to run two-sided Z-tests for proportions.
+3. **Data Visualization:** Developing dynamic monitoring frameworks and visualization panels.
 
 ---
 
-## 🔗 Interactive Version
-Both dashboards are fully interactive and available on Tableau Public:
-👉 [View full Portfolio1 Workbook on Tableau Public](https://public.tableau.com/app/profile/ihor.petrsyhyn/viz/Portfolio1_17817002319700/additionaldashboard)
+## Data & Resources
+* **Analysis Notebook:** [Portfolio Project 2 - Colab](https://colab.research.google.com/drive/1NiUcdnNsq0FWRnamYTzOntisY5TUr_8k#scrollTo=9Ug9qks7wmWC)
+* **Interactive Dashboard:** [Tableau Public Dashboard](https://public.tableau.com/app/profile/ihor.petrsyhyn/viz/Portfolio2_17821301696490/Dashboard1?publish=yes)
+* **Processed Dataset:** [AB_test_results.csv](https://drive.google.com/file/d/1RvWbN5xmTDkjfsW2tS0_8I7iXF2IZJ4g/view?usp=sharing)
 
 ---
 
-## 📐 Project Structure & Dashboard Overview
-
-### 1. Main Dashboard (Macro KPIs & Geography)
-Focuses on macro-level revenue metrics, overall user activity, and geographical business performance.
-* **Key Performance Indicators (KPIs):** Total Revenue and Total Sessions tracking.
-* **Category & Country Revenue:** Revenue distribution by product categories and leading countries.
-* **Device & Continent Revenue:** Analysis of revenue shares generated across different device types and continents.
-* **Revenue Dynamics:** Linear trends showing long-term revenue fluctuations.
-
-### 2. Additional Dashboard (Subscription & Session Deep-Dive)
-Details granular user behavior, subscription health, and technical audience metrics.
-* **Accounts & Verification:** Total user base analysis (~27.9k accounts) with a strict breakdown of Verified (71.70%) vs Unverified (28.30%) profiles.
-* **Revenue by Subscription Status:** Deep-dive into revenue streams from active users (Subscribed — $2,150,797) compared to churned users (Unsubscribed — $29,820,934).
-* **Sessions by Device & OS:** A matrix heatmap analyzing cross-platform performance across Desktop, Mobile, and Tablet running Windows, Macintosh, iOS, Android, and Web interfaces.
-* **Subscription Status by Date & Revenue Dynamic:** Daily timelines showing new subscription activations and cancellations alongside daily financial fluctuations for both cohorts.
-* **Verified Accounts by Country:** A geographic leaderboard tracking user acquisition (Top countries: United States, India, Canada).
+## Core Funnel Metrics Evaluated
+The automated function evaluates statistical significance ($\alpha = 0.05$) for the following metrics relative to the total number of sessions:
+* `add_shipping_info / session`
+* `add_payment_info / session`
+* `begin_checkout / session`
+* `new account / session`
 
 ---
 
-## 📷 Screenshots
-*(You can download screenshots of both dashboard pages, upload them to your repository, and link them below)*
-![Main Dashboard](link_to_main_dashboard_screenshot)
-![Additional Dashboard](link_to_additional_dashboard_screenshot)
+## Key Findings & Executive Summary
+
+### Test 1: Highly Successful (Partial Rollout Recommended)
+* **Device Segment:** **Desktop** and **Mobile** demonstrated outstanding conversion growth across core metrics (shipping, payment, checkout). Mobile `add_payment_info` was exceptionally strong with a lift of **+17.14%**.
+* **Channel Segment:** **Direct** traffic showed stable growth along the entire funnel (`begin_checkout` up by **+14.72%**). However, **Organic Search** experienced a critical drop (e.g., **-19.46%** on payment), which requires separate isolation since organic search accounts for ~34.5% of total traffic.
+* **Recommendation:** Deploy Variant B for Desktop and Mobile immediately (covering 98% of user traffic). Run an isolated test for Organic Search traffic and run a technical audit on Tablet layout due to severe conversion drops.
+
+### Test 2: Inconclusive / Neutral (Rollback Recommended)
+* **Device Segment:** **Desktop** traffic pulled overall numbers into a slight visual increase (+5.45% to +8.00%), but given the broader neutral picture, this remains statistically insufficient to justify the release.
+* **Channel Segment:** **Organic Search** repeated a negative trend, showing a steady decline across the entire funnel (e.g., **-14.28%** on payment). 
+* **Recommendation:** Conclude the test as neutral/unsuccessful. Roll back 100% of the traffic to Variant A. Variant B does not bring visible profit and degrades experience for search engine users.
+
+### Test 3: Unsuccessful (Reject Variant B)
+* **Device Segment:** **Mobile** was the main driver of the decline, with `begin_checkout` dropping by **-4.70%** and `add_shipping_info` falling by **-2.10%**.
+* **Channel Segment:** **Organic Search** (~35.5% of traffic) continuously degraded, dropping by **-8.02%** at the checkout stage.
+* **Recommendation:** Completely reject Variant B. The changes significantly harm the checkout funnel on mobile devices and organic channels. Perform a detailed UX/UI audit of the mobile version.
+
+### Test 4: Unsuccessful (Reject Variant B)
+* **Device Segment:** **Desktop** traffic (58.43% share) was the main reason for the failure, showing solid drops across the entire funnel: payment (**-7.39%**), shipping (**-6.40%**), and checkout (**-5.69%**). Interestingly, Mobile responded positively (+4.29% checkout lift).
+* **Channel Segment:** **Organic Search** sank by **-7.96%** for checkout. **Social Search** dropped significantly by **-20.78%** at the payment step.
+* **Recommendation:** Reject Variant B. The interface changes were clearly designed without desktop optimization in mind, introducing heavy visual obstacles or bugs that disrupt the primary conversion journey on larger screens.
+
+---
+
+## Tech Stack & Libraries
+* **SQL** (BigQuery) — Raw data aggregation and session formatting
+* **Python** (Google Colab Environment)
+  * `pandas` & `numpy` — Data manipulation and structuring
+  * `statsmodels` — `proportions_ztest` implementation for statistical calculations
+  * `matplotlib` & `seaborn` — Visualization and plotting

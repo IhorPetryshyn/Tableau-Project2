@@ -18,7 +18,15 @@ This project focuses on evaluating the performance of new user interface configu
 
 ---
 
-```
+## BigQuery Data Extraction Script
+
+Before executing the A/B testing statistical pipeline in Python, session log data was extracted and merged from BigQuery using the following SQL query:
+
+<details>
+    
+<summary>🔍 Click to expand BigQuery Data Extraction SQL Query</summary>
+    
+```sql
 with session_info as (
 SELECT
     date,
@@ -197,9 +205,11 @@ Select
     session.test_group,
     'session' as event_name,
     session.session_cnt as value
-from session
+from session;
 ```
 
+</details>
+    
 ---
 
 ## 📐 Statistical Framework & Funnel Metrics

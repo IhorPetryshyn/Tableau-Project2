@@ -8,13 +8,197 @@ This project focuses on evaluating the performance of new user interface configu
 2. **Statistical Analysis:** Implementing an automated segmentation and evaluation function using Python (Pandas & Statsmodels) in Google Colab to run two-sided Z-tests for proportions.
 3. **Data Visualization:** Developing dynamic monitoring frameworks and visualization panels.
 
-## 📁 Project Structure & Quick Links
+## 📁 Quick Links
 
-* 📄 **Executive Summary:** [`README.md`](https://github.com/IhorPetryshyn/A-B-Testing-Analytics-Checkout-Funnel-Optimization-Z-Test-Evaluation/blob/main/README.md)
+* 📄 **Data for Testing:** [Google Drive - Query Data Folder](https://drive.google.com/file/d/1NX2a7ePRxbuzYX0bwHa-FKvk-YijHqjg/view?usp=sharing)
 * 🐍 **Python Analytics & Statistical Testing:** [`Portfolio_Project_2.ipynb`](https://github.com/IhorPetryshyn/A-B-Testing-Analytics-Checkout-Funnel-Optimization-Z-Test-Evaluation/blob/main/Portfolio_Project_2.ipynb)
 * 🗄️ **Colab Source Notebook:** [Google Colab Link](https://colab.research.google.com/drive/1IVlGJwd2mlzuZjR_PrvfMBRFJDplsESn)
 * 📊 **Interactive Dashboard:** [Tableau Public Dashboard](https://public.tableau.com/app/profile/ihor.petrsyhyn/viz/Portfolio2_17821301696490/Dashboard1?publish=yes)
 * 💾 **Processed Dataset:** [AB_test_results.csv](https://drive.google.com/file/d/1RvWbN5xmTDkjfsW2tS0_8I7iXF2IZJ4g/view?usp=sharing)
+
+---
+
+```
+with session_info as (
+SELECT
+    date,
+    sp.country,
+    s.ga_session_id,
+    sp.device,
+    sp.continent,
+    sp.channel,
+    ab.test,
+    ab.test_group,
+from `DA.session_params` sp
+join `DA.ab_test` ab
+on sp.ga_session_id = ab.ga_session_id
+join `DA.session` s
+on s.ga_session_id = sp.ga_session_id
+),
+
+
+events as(
+select
+    session_info.date,
+    session_info.country,
+    session_info.device,
+    session_info.continent,
+    session_info.channel,
+    session_info.test,
+    session_info.test_group,
+    event_name,
+    count (ep.ga_session_id) as session_with_events
+from session_info
+join `DA.event_params` ep
+on ep.ga_session_id = session_info.ga_session_id
+group by
+    session_info.date,
+    session_info.country,
+    session_info.device,
+    session_info.continent,
+    session_info.channel,
+    session_info.test,
+    session_info.test_group,
+    event_name
+),
+session as(
+select
+    session_info.date,
+    session_info.country,
+    session_info.device,
+    session_info.continent,
+    session_info.channel,
+    session_info.test,
+    session_info.test_group,
+    count(distinct ga_session_id) as session_cnt
+from session_info
+
+
+group by
+    session_info.date,
+    session_info.country,
+    session_info.device,
+    session_info.continent,
+    session_info.channel,
+    session_info.test,
+    session_info.test_group
+),
+
+
+orders as(
+select
+    session_info.date,
+    session_info.country,
+    session_info.device,
+    session_info.continent,
+    session_info.channel,
+    session_info.test,
+    session_info.test_group,
+    count(distinct o.ga_session_id) as session_with_orders
+from session_info
+join `DA.order` o
+on o.ga_session_id = session_info.ga_session_id
+group by
+    session_info.date,
+    session_info.country,
+    session_info.device,
+    session_info.continent,
+    session_info.channel,
+    session_info.test,
+    session_info.test_group
+),
+
+
+accounts as(
+select
+    session_info.date,
+    session_info.country,
+    session_info.device,
+    session_info.continent,
+    session_info.channel,
+    session_info.test,
+    session_info.test_group,
+    count(distinct acs.ga_session_id) as new_account_cnt
+
+
+from `DA.account_session` acs
+join session_info
+on session_info.ga_session_id = acs.ga_session_id
+group by
+    session_info.date,
+    session_info.country,
+    session_info.device,
+    session_info.continent,
+    session_info.channel,
+    session_info.test,
+    session_info.test_group
+)
+
+
+Select    
+    events.date,
+    events.country,
+    events.device,
+    events.continent,
+    events.channel,
+    events.test,
+    events.test_group,
+    event_name,
+    session_with_events as value,
+
+
+from events
+
+
+UNION ALL
+
+
+Select    
+    orders.date,
+    orders.country,
+    orders.device,
+    orders.continent,
+    orders.channel,
+    orders.test,
+    orders.test_group,
+    'session with orders' as event_name,
+    orders.session_with_orders as value,
+
+
+from orders
+
+
+UNION ALL
+
+
+Select    
+    accounts.date,
+    accounts.country,
+    accounts.device,
+    accounts.continent,
+    accounts.channel,
+    accounts.test,
+    accounts.test_group,
+    'new account' as event_name,
+    accounts.new_account_cnt as value
+from accounts
+
+
+UNION ALL
+
+
+Select    
+    session.date,
+    session.country,
+    session.device,
+    session.continent,
+    session.channel,
+    session.test,
+    session.test_group,
+    'session' as event_name,
+    session.session_cnt as value
+from session
+```
 
 ---
 

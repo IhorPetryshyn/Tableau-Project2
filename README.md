@@ -1,4 +1,4 @@
-# A/B Testing Analysis Portfolio Project
+# A/B Testing Analytics: Checkout Funnel Optimization & Z-Test Evaluation
 
 ## Project Overview
 This project focuses on evaluating the performance of new user interface configurations and algorithms (Variant B) compared to the baseline system (Variant A) across four independent A/B tests. The goal is to optimize the conversion funnel by analyzing data sliced by device categories and traffic channels, verifying statistical significance, and providing actionable business recommendations.
